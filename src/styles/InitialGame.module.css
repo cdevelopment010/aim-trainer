@@ -1,16 +1,66 @@
 .container {
-    height: 100vh; 
-    width: 100vw; 
-    position:relative; 
-    
-  }
-  .ball {
-    position: absolute; 
-    border-radius: 50%; 
-    height: 50px; 
-    width: 50px; 
-    left: 0; 
-    top: 0; 
-    background: black;
-    background: radial-gradient(circle at 10px 10px, #5cabff, #000);
-  }
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-inline: auto; 
+  position:relative; 
+  background: rgb(91, 85, 85);
+  overflow: hidden;
+  color: white;
+}
+
+.game-nav {
+  height: 10vh;
+  font-weight: bold;
+}
+
+.game-container{
+  height: 100%; 
+  width: 100%;
+  margin-inline: auto; 
+  position:relative; 
+  flex-grow: 1;
+}
+.ball {
+  position: absolute; 
+  border-radius: 50%; 
+  height: 50px; 
+  width: 50px; 
+  left: 0; 
+  top: 0; 
+  background: black;
+  background: radial-gradient(circle at 10px 10px, #5cabff, #000);
+}
+
+.counter {
+  font-size: 2rem;
+  position: relative;
+  height: 100%; 
+  border-radius: 50%;
+  background: rgb(221, 200, 11);
+}
+
+
+.timer {
+  font-size: 1rem;
+  position: relative;
+  height: 4rem; 
+  border-radius: 50%;
+  background: rgb(221, 11, 99);
+}
+
+.accuracy {
+  font-size: 1rem;
+  position: relative;
+  height: 4rem; 
+  width: 4rem;
+  border-radius: 50%;
+  background: rgb(221, 11, 99);
+}
+
+
+.w-1 {width: 1rem}
+.w-2 {width: 2rem}
+.w-3 {width: 3rem}
+.w-4 {width: 4rem}
+.w-5 {width: 5rem}
