@@ -7,7 +7,7 @@ const initialGame = () => {
     const [counter, setCounter] = useState(0); 
     const [mouseClicks, setMouseClicks] = useState(0); 
     const [accuracy, setAccuracy] = useState(0)
-    const [timer, setTimer] = useState(6 * 1000); //60 seconds in miliseconds
+    const [timer, setTimer] = useState(10 * 1000); //60 seconds in miliseconds
 
     useEffect(() => {
       setAccuracy(mouseClicks ? Math.round((counter / mouseClicks)*100) / 100: 0);
@@ -21,35 +21,35 @@ const initialGame = () => {
         // function will need to tidy up onClick events 
         // show game over screen? Accuracy, targets hit (overall score?)
         // what could be the calculation for overall score? targets * accuracy * 100? 
+
+
+        
         return;
       }
        let interval = setInterval(()=>{
         setTimer(timer => timer - 100);
       }, 100)
       
-      return () => clearInterval(interval)
+      return () => {
+        clearInterval(interval);
+      }
     }, [timer])
 
     useEffect(() => {
       generateBall();
-      // container mouse clicks for accuracy
-      const container = document.getElementById('game-container');
-      container.addEventListener('click', addMouseClicks)
-      return () => {
-        container.removeEventListener('click', addMouseClicks);
-        // clearInterval(intervalID);
-      }
     },[])
 
     function addMouseClicks() {
-      setMouseClicks(mouseClicks => mouseClicks + 1); 
+      if (timer <=0) {return}
+      console.log("mouse click...", timer)
+      if (timer > 0 ) {
+        setMouseClicks(mouseClicks => mouseClicks + 1); 
+      }
     }
 
     function generateBall() {
         const container = document.getElementById("game-container");
         const containerRect = container.getBoundingClientRect();
-       
-        // const div = document.createElement("div");
         const div = document.getElementById("ball");
         div.style.visibility = "hidden"
         div.addEventListener("click", removeBall);        
@@ -64,14 +64,10 @@ const initialGame = () => {
         let vHeight = Math.floor(Math.random() * maxTop);
         
         div.style.left = vLeft + "px";
-        div.style.top = vHeight + "px";
-        let divRect = div.getBoundingClientRect()
-        
-        if (divRect.bottom > containerRect.bottom) {
-          alert("Off screen");
-        }
-        
+        div.style.top = vHeight + "px";              
         div.style.visibility = "visible"; 
+
+        return () => div.removeEventListener("click", removeBall);   
       }
       
       function removeBall() {
@@ -90,7 +86,7 @@ const initialGame = () => {
             <div className={`text-center-div ${style['w-5']} ${style.counter}`}>{counter}</div>
             <div className={`text-center-div ${style['w-4']} ${style.accuracy}`}>{ new Intl.NumberFormat(undefined, {style:'percent'}).format(accuracy) }</div>
           </div>
-          <div id="game-container" className={style['game-container']}>
+          <div id="game-container" className={style['game-container']} onClick={addMouseClicks}>
             <div id="ball" className={style.ball}></div>
 
           </div>
