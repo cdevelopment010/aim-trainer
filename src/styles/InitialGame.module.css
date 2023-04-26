@@ -64,3 +64,31 @@
 .w-3 {width: 3rem}
 .w-4 {width: 4rem}
 .w-5 {width: 5rem}
+
+
+.scoreboard {
+  border-radius: 10px;
+  box-shadow: 4px 4px 8px 0 rgba(0,0,0,0.5);
+  position: absolute; 
+  top: 30%; 
+  left: 30%; 
+  right: 30%; 
+  bottom: 30%; 
+  background: white; 
+  color: black;
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap:20px;
+}
+
+.scoreboard div {
+  display: flex;
+  gap: 10px; 
+}
+
+.scoreboard div button {
+  outline: none;
+
+}

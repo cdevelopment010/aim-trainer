@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from "react";
 import style from "../styles/InitialGame.module.css";
+import Link from "next/link";
 
 const initialGame = () => {
 
@@ -10,20 +11,14 @@ const initialGame = () => {
     const [timer, setTimer] = useState(10 * 1000); //60 seconds in miliseconds
 
     useEffect(() => {
+      console.log("set accuracy", counter, mouseClicks)
       setAccuracy(mouseClicks ? Math.round((counter / mouseClicks)*100) / 100: 0);
-    }, [counter, mouseClicks])
+    }, [mouseClicks])
 
     useEffect(() => {
       if (timer <= 0) {
         document.getElementById("ball").style.visibility = 'hidden';
-        console.log('Game over...'); //create a function
         gameOver();
-        // function will need to tidy up onClick events 
-        // show game over screen? Accuracy, targets hit (overall score?)
-        // what could be the calculation for overall score? targets * accuracy * 100? 
-
-
-        
         return;
       }
        let interval = setInterval(()=>{
@@ -36,42 +31,41 @@ const initialGame = () => {
     }, [timer])
 
     useEffect(() => {
+      const div = document.getElementById("ball");   
+      div.addEventListener("click", removeBall);  
       generateBall();
+
+      return () => div.removeEventListener("click", removeBall);
     },[])
 
     function addMouseClicks() {
       if (timer <=0) {return}
-      console.log("mouse click...", timer)
       if (timer > 0 ) {
-        setMouseClicks(mouseClicks => mouseClicks + 1); 
+        setMouseClicks(mouseClicks => {
+          return mouseClicks + 1
+        }); 
       }
     }
 
     function generateBall() {
         const container = document.getElementById("game-container");
-        const containerRect = container.getBoundingClientRect();
         const div = document.getElementById("ball");
         div.style.visibility = "hidden"
-        div.addEventListener("click", removeBall);        
+        // div.removeEventListener("click", removeBall);      
         
         let maxLeft = container.offsetWidth - div.offsetWidth; 
         let maxTop = container.offsetHeight - div.offsetHeight;
-
-        // let vLeft = Math.random() * containerRect.width; 
-        // let vHeight = Math.random() * containerRect.height;
 
         let vLeft = Math.floor(Math.random() * maxLeft);
         let vHeight = Math.floor(Math.random() * maxTop);
         
         div.style.left = vLeft + "px";
         div.style.top = vHeight + "px";              
-        div.style.visibility = "visible"; 
-
-        return () => div.removeEventListener("click", removeBall);   
+        div.style.visibility = "visible";   
       }
       
       function removeBall() {
-        setCounter(counter => counter + 1);
+        setCounter(counter => counter + 1); 
         generateBall()
       }
 
@@ -79,6 +73,13 @@ const initialGame = () => {
         let score = counter * accuracy * 100  ; 
       }
 
+      function restartGame() {
+        setCounter(0);
+        setTimer(10 * 1000);
+        setAccuracy(0); 
+        setMouseClicks(0); 
+        generateBall();
+      }
     return (
         <div id="container" className={style.container}>
           <div className={`d-flex justify-content-center align-center ${style['game-nav']}` }>
@@ -90,6 +91,20 @@ const initialGame = () => {
             <div id="ball" className={style.ball}></div>
 
           </div>
+
+          {/* Score modal */}
+          {timer <= 0 &&
+            <div className={`${timer <= 0 ? '' : 'd-none'} ${style.scoreboard}`}>
+              <h3>GAME OVER</h3>
+              <span>You scored <strong>{(counter * accuracy * 100).toFixed(0)}!</strong></span>
+              <div>
+              <button>
+                <Link href="/">Back to home screen</Link>
+              </button>
+              <button onClick={restartGame}>Restart</button>
+              </div>
+            </div>
+          }
 
         </div>
     )
