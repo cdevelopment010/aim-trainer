@@ -29,7 +29,7 @@ export default function Home() {
         <div className={`${styles.ball} ${styles.ball3}`}></div>
       </div>
       <main className={`bg-1 h-100 w-100 text-colour-white-60 d-flex align-center justify-content-center`} >
-        <h1 className={`text-colour-2 text-uppercase text-10 text-right line-height-90 w-50 font-bold`} style={{zIndex: 100}}>Aim trainer</h1>
+        <h1 className={`text-colour-2 text-uppercase text-10 text-right line-height-90 w-50 font-bold text-overflow`} style={{zIndex: 100}}>Aim trainer</h1>
         <div className={`d-flex flex-column gap-10 w-50 align-center`}>
           <div className={`w-50 gap-10 d-flex flex-column`}>
             <GameList />

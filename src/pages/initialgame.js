@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import style from "../styles/InitialGame.module.css";
 import Link from "next/link";
 import Nav from "@/Components/Nav";
+import GameOverModal from "@/Components/GameOverModal";
 
 const initialGame = () => {
 
@@ -76,7 +77,7 @@ const initialGame = () => {
 
       function restartGame() {
         setCounter(0);
-        setTimer(10 * 1000);
+        setTimer(30 * 1000);
         setAccuracy(0); 
         setMouseClicks(0); 
         generateBall();
@@ -84,7 +85,7 @@ const initialGame = () => {
     return (
         <div id="container" className={`bg-1 ${style.container}`}>
           <Nav />
-          <div className={`d-flex justify-content-center align-center ${style['game-nav']}` }>
+          <div className={`d-flex justify-content-center align-center ${style['game-nav']} gap-10` }>
             <div className={`text-center-div text-colour-white-60 ${style['w-4']} ${style.timer}`}>{Math.round(timer*1)/1000}</div>
             <div className={`text-center-div text-colour-2 ${style['w-7']} ${style.counter}`}>{counter}</div>
             <div className={`text-center-div text-colour-white-60 ${style['w-4']} ${style.accuracy}`}>{ new Intl.NumberFormat(undefined, {style:'percent'}).format(accuracy) }</div>
@@ -96,16 +97,17 @@ const initialGame = () => {
 
           {/* Score modal */}
           {timer <= 0 &&
-            <div className={`${timer <= 0 ? '' : 'd-none'} ${style.scoreboard}`}>
-              <h3>GAME OVER</h3>
-              <span>You scored <strong>{(counter * accuracy * 100).toFixed(0)}!</strong></span>
-              <div>
-              <button>
-                <Link href="/">Back to home screen</Link>
-              </button>
-              <button onClick={restartGame}>Restart</button>
-              </div>
-            </div>
+            <GameOverModal score={(counter * accuracy * 100).toFixed(0)} restartGame={restartGame}/>
+            // <div className={`${timer <= 0 ? '' : 'd-none'} ${style.scoreboard}`}>
+            //   <h3>GAME OVER</h3>
+            //   <span>You scored <strong>{(counter * accuracy * 100).toFixed(0)}!</strong></span>
+            //   <div>
+            //   <button>
+            //     <Link href="/">Back to home screen</Link>
+            //   </button>
+            //   <button onClick={restartGame}>Restart</button>
+            //   </div>
+            // </div>
           }
 
         </div>

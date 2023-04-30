@@ -22,6 +22,7 @@ html {
 }
 
 hr {height: 1px;border:none;background: var(--colour-3)}
+a {color: inherit;text-decoration: none;}
 
 .h-100 {height: 100vh;}
 .h-75 {height: 75vh;}
@@ -58,6 +59,8 @@ hr {height: 1px;border:none;background: var(--colour-3)}
 .text-colour-white-40 {color: rgba(255,255,255,.40)}
 .text-colour-white-25 {color: rgba(255,255,255,.25)}
 
+.text-2 {font-size: 2rem}
+.text-3 {font-size: 3rem}
 .text-5 {font-size: 5rem}
 .text-10 {font-size: 10rem}
 .text-50 {font-size: 50rem}
@@ -66,6 +69,7 @@ hr {height: 1px;border:none;background: var(--colour-3)}
 .text-uppercase {text-transform: uppercase;}
 .text-right {text-align: end;}
 .line-height-90 {line-height: 90%;}
+.text-overflow{overflow-wrap: break-word}
 
 .font-bold {font-weight: 700;}
 
@@ -98,3 +102,32 @@ hr {height: 1px;border:none;background: var(--colour-3)}
 .m-3 {margin:0.75rem;}
 .m-4 {margin:1rem;}
 .m-5 {margin:1.5rem;}
+
+
+.btn {
+  border: none; 
+  outline: none; 
+  border-radius: 10px; 
+  padding: 6px 10px;
+  background: none; 
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--colour-2); 
+  color: white; 
+  font-weight: bold;
+}
+.btn-primary:hover {
+  background-image: linear-gradient(rgba(0 0 0 /5%) 0 0 );
+}
+
+.btn-secondary {
+  border: 1px solid var(--colour-4); 
+  color: var(--colour-4);
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  filter: brightness(120%)
+}
