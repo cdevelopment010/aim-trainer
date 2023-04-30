@@ -2,13 +2,14 @@
 import { useEffect, useState } from "react";
 import style from "../styles/InitialGame.module.css";
 import Link from "next/link";
+import Nav from "@/Components/Nav";
 
 const initialGame = () => {
 
     const [counter, setCounter] = useState(0); 
     const [mouseClicks, setMouseClicks] = useState(0); 
     const [accuracy, setAccuracy] = useState(0)
-    const [timer, setTimer] = useState(10 * 1000); //60 seconds in miliseconds
+    const [timer, setTimer] = useState(30 * 1000); //60 seconds in miliseconds
 
     useEffect(() => {
       console.log("set accuracy", counter, mouseClicks)
@@ -81,14 +82,15 @@ const initialGame = () => {
         generateBall();
       }
     return (
-        <div id="container" className={style.container}>
+        <div id="container" className={`bg-1 ${style.container}`}>
+          <Nav />
           <div className={`d-flex justify-content-center align-center ${style['game-nav']}` }>
-            <div className={`text-center-div ${style['w-4']} ${style.timer}`}>{Math.round(timer*1)/1000}</div>
-            <div className={`text-center-div ${style['w-5']} ${style.counter}`}>{counter}</div>
-            <div className={`text-center-div ${style['w-4']} ${style.accuracy}`}>{ new Intl.NumberFormat(undefined, {style:'percent'}).format(accuracy) }</div>
+            <div className={`text-center-div text-colour-white-60 ${style['w-4']} ${style.timer}`}>{Math.round(timer*1)/1000}</div>
+            <div className={`text-center-div text-colour-2 ${style['w-7']} ${style.counter}`}>{counter}</div>
+            <div className={`text-center-div text-colour-white-60 ${style['w-4']} ${style.accuracy}`}>{ new Intl.NumberFormat(undefined, {style:'percent'}).format(accuracy) }</div>
           </div>
           <div id="game-container" className={style['game-container']} onClick={addMouseClicks}>
-            <div id="ball" className={style.ball}></div>
+            <div id="ball" className={`${style.ball} cursor-pointer`}></div>
 
           </div>
 
