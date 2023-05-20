@@ -9,23 +9,23 @@ export default function GameList() {
     return (
         <>
         <div className={`game`}>
-              <Link href="/initialgame" className={`text-colour-2 ${styles.gametitle}`} >
+              <Link href="/target-practice" className={`text-colour-2 ${styles.gametitle}`} >
                 <h2 className={`text-colour-white-60 ${styles.gametitlehover}`}>
                   <FontAwesomeIcon icon={faAnglesRight} className={styles.gameIcon}/> 
-                  Initial Game!
+                  Target practice
                 </h2>
                 </Link>
-              <p className={`text-colour-white-40 ${styles.gamedeschover}`}>This is the first iteration of the aim trainer. Try to hit as many targets as possible within the time limit</p>
+              <p className={`text-colour-white-40 ${styles.gamedeschover}`}>Try to hit as many targets as possible within the time limit</p>
             </div>
             <hr />
             <div className={`game`}>
-              <Link href="/" className={`text-colour-2 ${styles.gametitle}`} >
+              <Link href="/tracking-game" className={`text-colour-2 ${styles.gametitle}`} >
                 <h2 className={`text-colour-white-60 ${styles.gametitlehover}`}>
                   <FontAwesomeIcon icon={faAnglesRight} className={styles.gameIcon}/> 
-                  Game #2
+                  Tracking Game
                 </h2>
                 </Link>
-              <p className={`text-colour-white-40 ${styles.gamedeschover}`}>This is the first iteration of the aim trainer. Try to hit as many targets as possible within the time limit</p>
+              <p className={`text-colour-white-40 ${styles.gamedeschover}`}>Hover over the target for as long as possible.</p>
             </div>
             <hr />
             <div className={`game`}>

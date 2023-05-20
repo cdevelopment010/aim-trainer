@@ -1,19 +1,19 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect, useState } from "react";
-import style from "../styles/InitialGame.module.css";
-import Link from "next/link";
-import Nav from "@/Components/Nav";
-import GameOverModal from "@/Components/GameOverModal";
 
-const initialGame = () => {
+import { useState, useEffect } from "react";
+import GameOverModal from "@/Components/GameOverModal";
+import Nav from "@/Components/Nav";
+import style from "../styles/InitialGame.module.css";
+
+const trackingGame = () => {
 
     const [counter, setCounter] = useState(0); 
     const [mouseClicks, setMouseClicks] = useState(0); 
     const [accuracy, setAccuracy] = useState(0)
     const [timer, setTimer] = useState(30 * 1000); //60 seconds in miliseconds
+    const [mouseHover, setMouseHover] = useState(false);
+
 
     useEffect(() => {
-      console.log("set accuracy", counter, mouseClicks)
       setAccuracy(mouseClicks ? Math.round((counter / mouseClicks)*100) / 100: 0);
     }, [mouseClicks])
 
@@ -24,6 +24,11 @@ const initialGame = () => {
         return;
       }
        let interval = setInterval(()=>{
+        if(mouseHover) {
+          setCounter(() => counter + 1)
+        }
+
+        setMouseClicks(() => mouseClicks + 1)
         setTimer(timer => timer - 100);
       }, 100)
       
@@ -33,12 +38,15 @@ const initialGame = () => {
     }, [timer])
 
     useEffect(() => {
-      const div = document.getElementById("ball");   
-      div.addEventListener("click", removeBall);  
+      const div = document.getElementById("ball"); 
+      div.addEventListener("mouseout", () => setMouseHover(false))
+      div.addEventListener("mouseover", removeBall);  
       generateBall();
+      moveBall(); 
 
-      return () => div.removeEventListener("click", removeBall);
+      return () => div.removeEventListener("mouseover", removeBall);
     },[])
+
 
     function addMouseClicks() {
       if (timer <=0) {return}
@@ -52,8 +60,7 @@ const initialGame = () => {
     function generateBall() {
         const container = document.getElementById("game-container");
         const div = document.getElementById("ball");
-        div.style.visibility = "hidden"
-        // div.removeEventListener("click", removeBall);      
+        div.style.visibility = "hidden"   
         
         let maxLeft = container.offsetWidth - div.offsetWidth; 
         let maxTop = container.offsetHeight - div.offsetHeight;
@@ -66,9 +73,45 @@ const initialGame = () => {
         div.style.visibility = "visible";   
       }
       
+      function moveBall() {
+        const div = document.getElementById("ball");
+        // let [oldTop, oldLeft] = [div.getBoundingClientRect().top, div.getBoundingClientRect().left]
+        let [top,left] = newPosition();
+        // let speed = generateSpeed([oldTop, oldLeft], [top, left]);
+        div.animate({top: top + 'px', left: left + 'px'},3000).finished.then(
+          function() { 
+            div.style.top = top + 'px';
+            div.style.left = left + 'px';
+            moveBall() }
+        )
+
+      }
+
+      function newPosition() {
+        const container = document.getElementById("game-container");
+        const div = document.getElementById("ball");
+        let maxLeft = container?.offsetWidth - div.offsetWidth; 
+        let maxTop = container?.offsetHeight - div.offsetHeight;
+        let vLeft = Math.floor(Math.random() * maxLeft);
+        let vHeight = Math.floor(Math.random() * maxTop);
+        
+        return [vHeight, vLeft];
+      }
+
+      function generateSpeed(oldPos, newPos) {
+        let x = Math.abs(oldPos[1] - newPos[1]);
+        let y = Math.abs(oldPos[0] - newPos[0]);
+        let greatest = x > y ? x : y;
+        let speedModifier = Math.random();
+        let speed = Math.ceil(greatest/speedModifier);
+        return speed;
+      }
+
+
+
       function removeBall() {
-        setCounter(counter => counter + 1); 
-        generateBall()
+        console.log("move overball")
+        setMouseHover(true);
       }
 
       function gameOver() {
@@ -90,28 +133,17 @@ const initialGame = () => {
             <div className={`text-center-div text-colour-2 ${style['w-7']} ${style.counter}`}>{counter}</div>
             <div className={`text-center-div text-colour-white-60 ${style['w-4']} ${style.accuracy}`}>{ new Intl.NumberFormat(undefined, {style:'percent'}).format(accuracy) }</div>
           </div>
-          <div id="game-container" className={style['game-container']} onClick={addMouseClicks}>
+          <div id="game-container" className={style['game-container']}>
             <div id="ball" className={`${style.ball} cursor-pointer`}></div>
-
           </div>
 
           {/* Score modal */}
           {timer <= 0 &&
             <GameOverModal score={(counter * accuracy * 100).toFixed(0)} restartGame={restartGame}/>
-            // <div className={`${timer <= 0 ? '' : 'd-none'} ${style.scoreboard}`}>
-            //   <h3>GAME OVER</h3>
-            //   <span>You scored <strong>{(counter * accuracy * 100).toFixed(0)}!</strong></span>
-            //   <div>
-            //   <button>
-            //     <Link href="/">Back to home screen</Link>
-            //   </button>
-            //   <button onClick={restartGame}>Restart</button>
-            //   </div>
-            // </div>
           }
 
         </div>
     )
 }
 
-export default initialGame;
+export default trackingGame;
