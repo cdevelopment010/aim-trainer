@@ -4,7 +4,7 @@ import GameOverModal from "@/Components/GameOverModal";
 import Nav from "@/Components/Nav";
 import style from "../styles/InitialGame.module.css";
 
-const trackingGame = () => {
+const TrackingGame = () => {
 
     const [counter, setCounter] = useState(0); 
     const [mouseClicks, setMouseClicks] = useState(0); 
@@ -146,4 +146,4 @@ const trackingGame = () => {
     )
 }
 
-export default trackingGame;
+export default TrackingGame;
