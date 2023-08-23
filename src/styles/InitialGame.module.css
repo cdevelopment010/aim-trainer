@@ -1,6 +1,6 @@
 .container {
   height: 100vh;
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   margin-inline: auto; 
   position:relative; 
@@ -19,6 +19,7 @@
   margin-inline: auto; 
   position:relative; 
   flex-grow: 1;
+  border: red 2px solid;
 }
 .ball {
   position: absolute;

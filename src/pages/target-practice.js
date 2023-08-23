@@ -10,6 +10,10 @@ const initialGame = () => {
     const [mouseClicks, setMouseClicks] = useState(0); 
     const [accuracy, setAccuracy] = useState(0)
     const [timer, setTimer] = useState(30 * 1000); //60 seconds in miliseconds
+    const [windowWidth, setWindowWidth] = useState();
+    const [windowHeight, setWindowHeight] = useState();
+    const [ballX, setBallX] = useState(0);
+    const [ballY, setBallY] = useState(0);
 
     useEffect(() => {
       console.log("set accuracy", counter, mouseClicks)
@@ -18,7 +22,6 @@ const initialGame = () => {
 
     useEffect(() => {
       if (timer <= 0) {
-        document.getElementById("ball").style.visibility = 'hidden';
         gameOver();
         return;
       }
@@ -32,14 +35,16 @@ const initialGame = () => {
     }, [timer])
 
     useEffect(() => {
-      const div = document.getElementById("ball");   
-      div.addEventListener("click", removeBall);  
-      generateBall();
-
-      return () => div.removeEventListener("click", removeBall);
+      setWindowWidth(window.innerWidth); 
+      setWindowHeight(window.innerHeight * 0.9);
     },[])
 
-    function addMouseClicks() {
+    useEffect(() => {
+      generateBall(); 
+    }, [windowWidth])
+
+    function addMouseClicks(e) {
+      checkBallClick(e);
       if (timer <=0) {return}
       if (timer > 0 ) {
         setMouseClicks(mouseClicks => {
@@ -48,21 +53,46 @@ const initialGame = () => {
       }
     }
 
-    function generateBall() {
-        const container = document.getElementById("game-container");
-        const div = document.getElementById("ball");
-        div.style.visibility = "hidden"
-        // div.removeEventListener("click", removeBall);      
-        
-        let maxLeft = container.offsetWidth - div.offsetWidth; 
-        let maxTop = container.offsetHeight - div.offsetHeight;
+    function checkBallClick(e) {
+      const canvas = document.getElementById("game-container");
+      const rect = canvas.getBoundingClientRect(); 
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-        let vLeft = Math.floor(Math.random() * maxLeft);
-        let vHeight = Math.floor(Math.random() * maxTop);
-        
-        div.style.left = vLeft + "px";
-        div.style.top = vHeight + "px";              
-        div.style.visibility = "visible";   
+      const distance = Math.sqrt((mouseX - ballX) **2 + (mouseY - ballY)**2);
+
+      if (distance < 50) {
+        removeBall();
+      }
+
+    }
+
+    function generateBall() {
+        const canvas = document.getElementById("game-container");
+        const ctx = canvas.getContext("2d");
+
+        //clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        //ball properties
+        let maxLeft = canvas.width - 100;
+        let maxTop = canvas.height - 100; 
+
+        // issue with ball going off the canvas in the y direction
+        const ballRadius = 50; 
+        let ballLocalX = Math.floor(Math.random() * maxLeft) + 50;
+        let ballLocalY = Math.floor(Math.random() * maxTop) + 50; 
+        setBallX(ballLocalX);
+        setBallY(ballLocalY);
+        console.log(ballLocalX, ballLocalY);
+
+        ctx.beginPath(); 
+        // ctx.arc(95, 50, 40, 0, 2 * Math.PI);
+        ctx.arc(ballLocalX, ballLocalY, ballRadius, 0, Math.PI * 2);
+        ctx.fillStyle = "blue";
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
       }
       
       function removeBall() {
@@ -89,10 +119,10 @@ const initialGame = () => {
             <div className={`text-center-div text-colour-2 ${style['w-7']} ${style.counter}`}>{counter}</div>
             <div className={`text-center-div text-colour-white-60 ${style['w-4']} ${style.accuracy}`}>{ new Intl.NumberFormat(undefined, {style:'percent'}).format(accuracy) }</div>
           </div>
-          <div id="game-container" className={style['game-container']} onClick={addMouseClicks}>
-            <div id="ball" className={`${style.ball} cursor-pointer`}></div>
-
-          </div>
+          <canvas id="game-container" width={windowWidth} height={windowHeight} style={{border: "1px solid red"}} onClick={addMouseClicks}>
+            {/*  className={style['game-container']} */}
+            {/* <div id="ball" className={`${style.ball} cursor-pointer`}></div> */}
+          </canvas>
 
           {/* Score modal */}
           {timer <= 0 &&
