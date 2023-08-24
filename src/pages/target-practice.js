@@ -89,9 +89,15 @@ const initialGame = () => {
         ctx.beginPath(); 
         // ctx.arc(95, 50, 40, 0, 2 * Math.PI);
         ctx.arc(ballLocalX, ballLocalY, ballRadius, 0, Math.PI * 2);
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = "#A4C2A5";
         ctx.fill();
-        ctx.stroke();
+
+        const shadowGradient = ctx.createRadialGradient(ballLocalX- ballRadius*0.4, ballLocalY- ballRadius*0.4, ballRadius / 4, ballLocalX, ballLocalY, ballRadius*1.3)
+        shadowGradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+        shadowGradient.addColorStop(1, "rgba(0, 0, 0, 0.5)");
+        ctx.fillStyle = shadowGradient;
+        ctx.fill();
+  
         ctx.closePath();
       }
       
@@ -119,7 +125,7 @@ const initialGame = () => {
             <div className={`text-center-div text-colour-2 ${style['w-7']} ${style.counter}`}>{counter}</div>
             <div className={`text-center-div text-colour-white-60 ${style['w-4']} ${style.accuracy}`}>{ new Intl.NumberFormat(undefined, {style:'percent'}).format(accuracy) }</div>
           </div>
-          <canvas id="game-container" width={windowWidth} height={windowHeight} style={{border: "1px solid red"}} onClick={addMouseClicks}>
+          <canvas id="game-container" width={windowWidth} height={windowHeight} onClick={addMouseClicks}>
             {/*  className={style['game-container']} */}
             {/* <div id="ball" className={`${style.ball} cursor-pointer`}></div> */}
           </canvas>
