@@ -4,7 +4,7 @@ import style from "../styles/InitialGame.module.css";
 import Nav from "@/Components/Nav";
 import GameOverModal from "@/Components/GameOverModal";
 
-const initialGame = ({precision = false}) => {
+const precisionGame = ({precision = true}) => {
 
     const [counter, setCounter] = useState(0); 
     const [mouseClicks, setMouseClicks] = useState(0); 
@@ -140,4 +140,4 @@ const initialGame = ({precision = false}) => {
     )
 }
 
-export default initialGame;
+export default precisionGame;

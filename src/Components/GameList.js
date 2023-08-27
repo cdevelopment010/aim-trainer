@@ -29,13 +29,13 @@ export default function GameList() {
             </div>
             <hr />
             <div className={`game`}>
-              <Link href="/" className={`text-colour-2 ${styles.gametitle}`} >
+              <Link href="/precision-game" className={`text-colour-2 ${styles.gametitle}`} state={{precision: true}} >
                 <h2 className={`text-colour-white-60 ${styles.gametitlehover}`}>
                   <FontAwesomeIcon icon={faAnglesRight} className={styles.gameIcon}/> 
-                  Game #3
+                  Precision Training
                 </h2>
                 </Link>
-              <p className={`text-colour-white-40 ${styles.gamedeschover}`}>This is the first iteration of the aim trainer. Try to hit as many targets as possible within the time limit</p>
+              <p className={`text-colour-white-40 ${styles.gamedeschover}`}>Try to hit as many targets as possible within the time limit, but watch out! The target changes size. </p>
             </div>
             <hr />
             <div className={`game`}>

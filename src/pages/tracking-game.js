@@ -28,7 +28,6 @@ const TrackingGame = () => {
     }, [mouseClicks])
 
     useEffect(() => {
-      console.log("timer ball pos:", [ballX, ballY])
       // moveBall();
       if (timer <= 0) {
         gameOver();
