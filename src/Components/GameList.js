@@ -39,13 +39,13 @@ export default function GameList() {
             </div>
             <hr />
             <div className={`game`}>
-              <Link href="/" className={`text-colour-2 ${styles.gametitle}`} >
+              <Link href="/grid-shot" className={`text-colour-2 ${styles.gametitle}`} >
                 <h2 className={`text-colour-white-60 ${styles.gametitlehover}`}>
                   <FontAwesomeIcon icon={faAnglesRight} className={styles.gameIcon}/> 
-                  Game #4
+                  Grid Shot
                 </h2>
                 </Link>
-              <p className={`text-colour-white-40 ${styles.gamedeschover}`}>This is the first iteration of the aim trainer. Try to hit as many targets as possible within the time limit</p>
+              <p className={`text-colour-white-40 ${styles.gamedeschover}`}></p>
             </div>
             <hr />
             <div className={`game`}>
