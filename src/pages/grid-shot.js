@@ -12,15 +12,10 @@ const precisionGame = () => {
     const [timer, setTimer] = useState(30 * 1000); //60 seconds in miliseconds
     const [windowWidth, setWindowWidth] = useState();
     const [windowHeight, setWindowHeight] = useState();
-    // const [ballX, setBallX] = useState(0);
-    // const [ballY, setBallY] = useState(0);
-    // const [ballX2, setBallX2] = useState(0);
-    // const [ballY2, setBallY2] = useState(0);
-    // const [ballX3, setBallX3] = useState(0);
-    // const [ballY3, setBallY3] = useState(0);
     const [ballRadius, setBallRadius] = useState(50);
     const [grid, setGrid] = useState([]) //array of object of all possible ball locations
     const [ballsInGrid, setBallsInGrid] = useState([]); //array of object that the balls current occupy. 
+    const [ballRemoved, setBallRemoved]  = useState([])
 
     useEffect(() => {
       setAccuracy(mouseClicks ? Math.round((counter / mouseClicks)*100) / 100: 0);
@@ -62,7 +57,7 @@ const precisionGame = () => {
         if (grid) {
             generateBall();
             drawBalls();
-            generateGrid();
+            // generateGrid();
         }
     },[ballsInGrid, grid])
 
@@ -114,11 +109,11 @@ const precisionGame = () => {
       //loop through current balls to see if one has been clicked;
 
       let currentBalls = [...ballsInGrid]; 
-      currentBalls.forEach(ball => {
+      currentBalls.forEach((ball, ind) => {
         const distance = Math.sqrt((mouseX - ball.x - 50) **2 + (mouseY - ball.y - 50)**2);
         if (distance < 50) {
-            let newBallList = currentBalls.filter(cell => cell.x !== ball.x && cell.y !== ball.y);
-            console.log("newBallList", newBallList.length)
+            let newBallList = currentBalls.filter(cell => !(cell.x === ball.x && cell.y === ball.y));
+            setBallRemoved([ball]);
             setBallsInGrid(newBallList);
             removeBall();
             return;
@@ -131,7 +126,6 @@ const precisionGame = () => {
         console.log("generate ball...", ballsInGrid.length);
 
         let vBallsInGrid = [...ballsInGrid]; 
-
         let currentGridCell;
         if (vBallsInGrid.length == 0) {
             //select random grid 
@@ -143,11 +137,47 @@ const precisionGame = () => {
             let xMax = vBallsInGrid.sort((a,b) => a.x < b.x && a.y < b.y ? 1 : -1)[0].x;
             let yMax = vBallsInGrid.sort((a,b) => a.x < b.x && a.y < b.y ? 1 : -1)[0].y;
 
-            let avaiableCells = grid.filter(cell => !vBallsInGrid.includes(cell))
+            let avaiableCells = grid.filter(cell => !vBallsInGrid.includes(cell)) //!ballRemoved.includes(cell)
+            avaiableCells = avaiableCells.filter(cell => !ballRemoved.includes(cell))
             let avaiableCells2 = avaiableCells.filter(cell =>(cell.x >= xMin-(ballRadius*2) && cell.x <= xMax+(ballRadius*2)) && (cell.y >= yMin-(ballRadius*2) && cell.y <= yMax + (ballRadius*2)) )
             // console.log(avaiableCells2);            
             currentGridCell = avaiableCells2[Math.floor(Math.random() * avaiableCells2.length)];     
-           
+
+            // 1) find all cells around the first ball
+            // 2) find all cells around the second ball 
+            // 3) union cells? 
+            // 4) remove cell that the ball had just been in
+            // 
+
+
+            // testing - keeping in for refence for now. 
+            // let availableCellsAroundBall1 = grid.filter(cell => (cell.x >= vBallsInGrid[0].x-(ballRadius*2) && cell.x <= vBallsInGrid[0].x+(ballRadius*2)) && (cell.y >= vBallsInGrid[0].y-(ballRadius*2) && cell.y <= vBallsInGrid[0].y + (ballRadius*2)) && !(cell.x == vBallsInGrid[0].x && cell.y === vBallsInGrid[0].y)  )
+            // console.log("availableCellsAroundBall1:", availableCellsAroundBall1,  vBallsInGrid[0]);
+            // let availableCellsAroundBall2 = [];
+            // let delta = 0;
+            // if (vBallsInGrid.length == 2 ){
+            //   availableCellsAroundBall2 = grid.filter(cell => (cell.x >= vBallsInGrid[1].x-(ballRadius*2) && cell.x <= vBallsInGrid[1].x+(ballRadius*2)) && (cell.y >= vBallsInGrid[1].y-(ballRadius*2) && cell.y <= vBallsInGrid[1].y + (ballRadius*2)) && !(cell.x == vBallsInGrid[1].x && cell.y === vBallsInGrid[1].y)  )
+            //   availableCellsAroundBall2 = availableCellsAroundBall2.filter(cell => !(cell.x === vBallsInGrid[0].x && cell.y === vBallsInGrid[0].y) )
+            //   // availableCellsAroundBall2 = availableCellsAroundBall2.filter(cell => !availableCellsAroundBall1.includes(cell) )
+            //   console.log("availableCellsAroundBall2:", availableCellsAroundBall2,  vBallsInGrid[1]);
+              
+            //   /// check if there is a gap between the two balls
+            //   delta = Math.sqrt(  (vBallsInGrid[0].x - vBallsInGrid[1].x) ** 2 +   (vBallsInGrid[0].y - vBallsInGrid[1].y) ** 2 );
+            //   console.log("delta",delta);
+            // }
+
+
+            // let totalAvailableCells = [];
+            // if (delta > 150) {
+            //   // intersect
+            //   totalAvailableCells = availableCellsAroundBall1.filter(cell => availableCellsAroundBall2.includes(cell));
+            // } else {
+            //   totalAvailableCells = [...availableCellsAroundBall1, ...availableCellsAroundBall2]; 
+            // }
+            // console.log("totalAvailableCells",totalAvailableCells);
+
+            // currentGridCell = totalAvailableCells[Math.floor(Math.random() * totalAvailableCells.length)];
+
         }
 
         
@@ -174,16 +204,6 @@ const precisionGame = () => {
             // console.log("ball", ball);
             let ballLocalX = ball.x + 50;
             let ballLocalY = ball.y + 50; 
-            // if (ind == 0) {
-            //     setBallX(ballLocalX);
-            //     setBallY(ballLocalY);
-            // } else if (ind == 1) {
-            //     setBallX2(ballLocalX);
-            //     setBallY2(ballLocalY);
-            // } else if (ind == 2) {
-            //     setBallX3(ballLocalX);
-            //     setBallY3(ballLocalY);
-            // }
 
             ctx.beginPath(); 
             ctx.arc(ballLocalX, ballLocalY, ballRadius, 0, Math.PI * 2);
