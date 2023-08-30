@@ -61,7 +61,7 @@ const precisionGame = ({precision = true}) => {
 
       const distance = Math.sqrt((mouseX - ballX) **2 + (mouseY - ballY)**2);
 
-      if (distance < 50) {
+      if (distance < ballRadius) {
         removeBall();
       }
 
