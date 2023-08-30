@@ -3,15 +3,16 @@ import { useState, useEffect } from "react";
 import GameOverModal from "@/Components/GameOverModal";
 import Nav from "@/Components/Nav";
 import style from "../styles/InitialGame.module.css";
+import UserGameConfig from "@/Components/UserGameConfig";
 
 const TrackingGame = () => {
 
+    const [gameStart, setGameStart] = useState(false);
     const [counter, setCounter] = useState(0); 
     const [mouseClicks, setMouseClicks] = useState(0); 
     const [accuracy, setAccuracy] = useState(0)
     const [timer, setTimer] = useState(30 * 1000); //30 seconds in miliseconds
     const [mouseHover, setMouseHover] = useState(false);
-    const [canvas, setCanvas] = useState();
     const [windowWidth, setWindowWidth] = useState();
     const [windowHeight, setWindowHeight] = useState();
     const [mouseX, setMouseX] = useState(0);
@@ -20,6 +21,7 @@ const TrackingGame = () => {
     const [ballY, setBallY] = useState(0);
     const [ballX2, setBallX2] = useState(0);
     const [ballY2, setBallY2] = useState(0);
+    const [ballRadius, setBallRadius] = useState(50);
     const [speed, setSpeed] = useState(2);
 
 
@@ -33,33 +35,36 @@ const TrackingGame = () => {
         gameOver();
         return;
       }
-      
-      let interval = setInterval(()=>{
-        checkBallPos()
-        if(mouseHover) {
-          setCounter(() => counter + 1)
-        }
-
-        setMouseClicks(() => mouseClicks + 1)
-        setTimer(timer => timer - 100);
-      }, 100)
+      let interval
+      if(gameStart){
+        interval = setInterval(()=>{
+          checkBallPos()
+          if(mouseHover) {
+            setCounter(() => counter + 1)
+          }
+  
+          setMouseClicks(() => mouseClicks + 1)
+          setTimer(timer => timer - 100);
+        }, 100)
+      } 
       
       return () => {
         clearInterval(interval);
       }
-    }, [timer])
+    }, [timer, gameStart])
 
 
     useEffect(() => {
       window.addEventListener("mousemove", getCurrentMouse); 
-      setWindowWidth(window.innerWidth); 
-      setWindowHeight(window.innerHeight * 0.9);
+      if (gameStart) {
+        setWindowWidth(window.innerWidth); 
+        setWindowHeight(window.innerHeight * 0.9);
+      }
       return ()=> window.removeEventListener("mousemove", getCurrentMouse);
-    },[])
+    },[gameStart])
 
     useEffect(() => {
       if (windowWidth){
-        setCanvas(document.getElementById("game-container"));
         let [ballLocalX, ballLocalY] = newPosition(); 
         setBallX(ballLocalX);
         setBallY(ballLocalY);
@@ -70,13 +75,16 @@ const TrackingGame = () => {
     }, [windowWidth])
 
     useEffect(()=> {
-      let interval = setInterval(() => {
-        moveBall();
-
-      }, 10)
+      let interval
+      if (gameStart){
+        interval= setInterval(() => {
+          moveBall();
+  
+        }, 10)
+      }
 
       return () => clearInterval(interval);
-    }, [ballX])
+    }, [ballX, gameStart])
   
 
     function getCurrentMouse(e) {
@@ -91,7 +99,7 @@ const TrackingGame = () => {
       const mouseY1 = mouseY - rect.top;
 
       const distance = Math.sqrt((mouseX1 - ballX) **2 + (mouseY1 - ballY)**2);
-      if (distance < 50) {
+      if (distance < ballRadius) {
         removeBall();
       } else {
         setMouseHover(false);
@@ -102,7 +110,6 @@ const TrackingGame = () => {
       const canvas = document.getElementById("game-container");
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const ballRadius = 50; 
       ctx.beginPath(); 
       ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
       ctx.fillStyle = "#A4C2A5";
@@ -126,23 +133,21 @@ const TrackingGame = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         //ball properties
-        let maxLeft = canvas.width - 100;
-        let maxTop = canvas.height - 100; 
+        let maxLeft = canvas.width - (ballRadius * 2);
+        let maxTop = canvas.height - (ballRadius * 2); 
 
         // issue with ball going off the canvas in the y direction
-        const ballRadius = 50; 
-        let ballLocalX = Math.floor(Math.random() * maxLeft) + 50;
-        let ballLocalY = Math.floor(Math.random() * maxTop) + 50; 
+        let ballLocalX = Math.floor(Math.random() * maxLeft) + ballRadius;
+        let ballLocalY = Math.floor(Math.random() * maxTop) + ballRadius; 
         setBallX(ballLocalX);
         setBallY(ballLocalY);
         
-        let ballLocalX2 = Math.floor(Math.random() * maxLeft) + 50;
-        let ballLocalY2 = Math.floor(Math.random() * maxTop) + 50;
+        let ballLocalX2 = Math.floor(Math.random() * maxLeft) + ballRadius;
+        let ballLocalY2 = Math.floor(Math.random() * maxTop) + ballRadius;
         setBallX2(ballLocalX2);
         setBallY2(ballLocalY2); 
 
         ctx.beginPath(); 
-        // ctx.arc(95, 50, 40, 0, 2 * Math.PI);
         ctx.arc(ballLocalX, ballLocalY, ballRadius, 0, Math.PI * 2);
         ctx.fillStyle = "#A4C2A5";
         ctx.fill();
@@ -188,10 +193,10 @@ const TrackingGame = () => {
       function newPosition() {
         const canvas = document.getElementById("game-container");
         const ctx = canvas.getContext("2d");
-        let maxLeft = canvas.width - 100;
-        let maxTop = canvas.height - 100; 
-        let ballLocalX = Math.floor(Math.random() * maxLeft) + 50;
-        let ballLocalY = Math.floor(Math.random() * maxTop) + 50;
+        let maxLeft = canvas.width - (ballRadius * 2);
+        let maxTop = canvas.height - (ballRadius * 2); 
+        let ballLocalX = Math.floor(Math.random() * maxLeft) + ballRadius;
+        let ballLocalY = Math.floor(Math.random() * maxTop) + ballRadius;
         
         return [ballLocalX, ballLocalY];
       }
@@ -210,6 +215,7 @@ const TrackingGame = () => {
         setAccuracy(0); 
         setMouseClicks(0); 
         generateBall();
+        setGameStart(false);
       }
     return (
         <div id="container" className={`bg-1 ${style.container}`}>
@@ -225,6 +231,11 @@ const TrackingGame = () => {
           {/* Score modal */}
           {timer <= 0 &&
             <GameOverModal score={(counter * accuracy * 100).toFixed(0)} restartGame={restartGame}/>
+          }
+
+          {
+            !gameStart &&
+            <UserGameConfig setGameStart={setGameStart} ballRadius={ballRadius} setBallRadius={setBallRadius} />
           }
 
         </div>

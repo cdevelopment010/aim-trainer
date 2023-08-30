@@ -25,13 +25,14 @@
     border-radius: 10px; 
     z-index: 10002; 
     position: absolute;
-    height: 50vh; 
+    min-height: 50vh; 
     width: 50vw; 
     top: 50%; 
     left: 50%; 
     transform: translate(-50%, -50%); 
     display: grid; 
-    grid-template-rows: 1fr 4fr 1fr;
+    /* grid-template-rows: 1fr 4fr 1fr; */
+    /* grid-template-rows: 1fr 1fr 1fr; */
     justify-content: center;
     align-items: center ;
 }
@@ -40,6 +41,10 @@
     display: grid; 
     height: 100%; 
     grid-template-rows: 1fr 4fr;
+}
+
+.modal-body-1fr {
+    grid-template-rows: 1fr;
 }
 
 .modal-footer {

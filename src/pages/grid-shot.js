@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import style from "../styles/InitialGame.module.css";
 import Nav from "@/Components/Nav";
 import GameOverModal from "@/Components/GameOverModal";
+import UserGameConfig from "@/Components/UserGameConfig";
 
 const precisionGame = () => {
 
+    const [gameStart, setGameStart] = useState(false);
     const [counter, setCounter] = useState(0); 
     const [mouseClicks, setMouseClicks] = useState(0); 
     const [accuracy, setAccuracy] = useState(0)
@@ -26,40 +28,44 @@ const precisionGame = () => {
         gameOver();
         return;
       }
-       let interval = setInterval(()=>{
-        setTimer(timer => timer - 100);
-      }, 100)
+      let interval;
+      if (gameStart) {
+        interval = setInterval(()=>{
+         setTimer(timer => timer - 100);
+        }, 100)
+      }
       
       return () => {
         clearInterval(interval);
       }
-    }, [timer])
+    }, [timer, gameStart])
 
     useEffect(() => {
-      setWindowWidth(window.innerWidth); 
-      setWindowHeight(window.innerHeight * 0.9);
-      let totalColumns = Math.floor(window.innerWidth / (ballRadius * 2)); 
-      let totalRows = Math.floor((window.innerHeight * 0.9) /  (ballRadius * 2));
+      if (gameStart) {
+        setWindowWidth(window.innerWidth); 
+        setWindowHeight(window.innerHeight * 0.9);
+        let totalColumns = Math.floor(window.innerWidth / (ballRadius * 2)); 
+        let totalRows = Math.floor((window.innerHeight * 0.9) /  (ballRadius * 2));
 
-      let posArr = []; 
+        let posArr = []; 
 
-      for(let i = 0; i < totalColumns; i++) {
-        for(let j = 0; j < totalRows; j++) {
-            let position = {x: i*ballRadius*2, y: j*ballRadius*2}
-            posArr.push(position);
+        for(let i = 0; i < totalColumns; i++) {
+          for(let j = 0; j < totalRows; j++) {
+              let position = {x: i*ballRadius*2, y: j*ballRadius*2}
+              posArr.push(position);
+          }
         }
-      }
 
-      setGrid(posArr);
-    },[])
+        setGrid(posArr);
+      }
+    },[gameStart])
 
     useEffect(() => {
-        if (grid) {
+        if (grid && gameStart) {
             generateBall();
             drawBalls();
-            // generateGrid();
         }
-    },[ballsInGrid, grid])
+    },[ballsInGrid, grid, gameStart])
 
     function addMouseClicks(e) {
       checkBallClick(e);
@@ -110,8 +116,8 @@ const precisionGame = () => {
 
       let currentBalls = [...ballsInGrid]; 
       currentBalls.forEach((ball, ind) => {
-        const distance = Math.sqrt((mouseX - ball.x - 50) **2 + (mouseY - ball.y - 50)**2);
-        if (distance < 50) {
+        const distance = Math.sqrt((mouseX - ball.x - ballRadius) **2 + (mouseY - ball.y - ballRadius)**2);
+        if (distance < ballRadius) {
             let newBallList = currentBalls.filter(cell => !(cell.x === ball.x && cell.y === ball.y));
             setBallRemoved([ball]);
             setBallsInGrid(newBallList);
@@ -202,8 +208,8 @@ const precisionGame = () => {
 
         balls.forEach((ball, ind) => {
             // console.log("ball", ball);
-            let ballLocalX = ball.x + 50;
-            let ballLocalY = ball.y + 50; 
+            let ballLocalX = ball.x + ballRadius;
+            let ballLocalY = ball.y + ballRadius; 
 
             ctx.beginPath(); 
             ctx.arc(ballLocalX, ballLocalY, ballRadius, 0, Math.PI * 2);
@@ -238,6 +244,9 @@ const precisionGame = () => {
         setAccuracy(0); 
         setMouseClicks(0); 
         generateBall();
+        setGameStart(false);
+        setBallsInGrid([]);
+        setGrid([]);
       }
     return (
         <div id="container" className={`bg-1 ${style.container}`}>
@@ -252,6 +261,11 @@ const precisionGame = () => {
           {/* Score modal */}
           {timer <= 0 &&
             <GameOverModal score={(counter * accuracy * 100).toFixed(0)} restartGame={restartGame}/>
+          }
+
+          {
+            !gameStart &&
+            <UserGameConfig setGameStart={setGameStart} ballRadius={ballRadius} setBallRadius={setBallRadius} />
           }
 
         </div>

@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import style from "../styles/InitialGame.module.css";
 import Nav from "@/Components/Nav";
 import GameOverModal from "@/Components/GameOverModal";
+import UserGameConfig from "@/Components/UserGameConfig";
 
 const initialGame = ({precision = false}) => {
 
+    const [gameStart, setGameStart] = useState(false);
     const [counter, setCounter] = useState(0); 
     const [mouseClicks, setMouseClicks] = useState(0); 
     const [accuracy, setAccuracy] = useState(0)
@@ -25,23 +27,30 @@ const initialGame = ({precision = false}) => {
         gameOver();
         return;
       }
-       let interval = setInterval(()=>{
-        setTimer(timer => timer - 100);
-      }, 100)
+      let interval;
+      if (gameStart) {
+        interval = setInterval(()=>{
+          setTimer(timer => timer - 100);
+        }, 100)
+      }
       
       return () => {
         clearInterval(interval);
       }
-    }, [timer])
+    }, [timer, gameStart])
 
     useEffect(() => {
-      setWindowWidth(window.innerWidth); 
-      setWindowHeight(window.innerHeight * 0.9);
-    },[])
+      if (gameStart) {
+        setWindowHeight(window.innerHeight * 0.9);
+        setWindowWidth(window.innerWidth); 
+      }
+    },[gameStart])
 
     useEffect(() => {
-      generateBall(); 
-    }, [windowWidth])
+      if (windowWidth && gameStart) {
+        generateBall(); 
+      }
+    }, [windowWidth, gameStart])
 
     function addMouseClicks(e) {
       checkBallClick(e);
@@ -61,7 +70,7 @@ const initialGame = ({precision = false}) => {
 
       const distance = Math.sqrt((mouseX - ballX) **2 + (mouseY - ballY)**2);
 
-      if (distance < 50) {
+      if (distance < ballRadius) {
         removeBall();
       }
 
@@ -75,28 +84,22 @@ const initialGame = ({precision = false}) => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         //ball properties
-        let maxLeft = canvas.width - 100;
-        let maxTop = canvas.height - 100; 
+        let maxLeft = canvas.width - (ballRadius * 2);
+        let maxTop = canvas.height - (ballRadius * 2); 
 
-        // issue with ball going off the canvas in the y direction
-        let localBallRadius = ballRadius;
-        if (precision) {
-          localBallRadius = Math.floor(Math.random() * (50 - 10 + 1)+10); 
-          setBallRadius(localBallRadius);
-        }
-         
-        let ballLocalX = Math.floor(Math.random() * maxLeft) + 50;
-        let ballLocalY = Math.floor(Math.random() * maxTop) + 50; 
+        // issue with ball going off the canvas in the y direction       
+        let ballLocalX = Math.floor(Math.random() * maxLeft) + ballRadius;
+        let ballLocalY = Math.floor(Math.random() * maxTop) + ballRadius; 
         setBallX(ballLocalX);
         setBallY(ballLocalY);
 
         ctx.beginPath(); 
         // ctx.arc(95, 50, 40, 0, 2 * Math.PI);
-        ctx.arc(ballLocalX, ballLocalY, localBallRadius, 0, Math.PI * 2);
+        ctx.arc(ballLocalX, ballLocalY, ballRadius, 0, Math.PI * 2);
         ctx.fillStyle = "#A4C2A5";
         ctx.fill();
 
-        const shadowGradient = ctx.createRadialGradient(ballLocalX- localBallRadius*0.4, ballLocalY- localBallRadius*0.4, localBallRadius / 4, ballLocalX, ballLocalY, localBallRadius*1.3)
+        const shadowGradient = ctx.createRadialGradient(ballLocalX- ballRadius*0.4, ballLocalY- ballRadius*0.4, ballRadius / 4, ballLocalX, ballLocalY, ballRadius*1.3)
         shadowGradient.addColorStop(0, "rgba(0, 0, 0, 0)");
         shadowGradient.addColorStop(1, "rgba(0, 0, 0, 0.5)");
         ctx.fillStyle = shadowGradient;
@@ -119,6 +122,7 @@ const initialGame = ({precision = false}) => {
         setTimer(30 * 1000);
         setAccuracy(0); 
         setMouseClicks(0); 
+        setGameStart(false);
         generateBall();
       }
     return (
@@ -134,6 +138,11 @@ const initialGame = ({precision = false}) => {
           {/* Score modal */}
           {timer <= 0 &&
             <GameOverModal score={(counter * accuracy * 100).toFixed(0)} restartGame={restartGame}/>
+          }
+
+          {
+            !gameStart &&
+            <UserGameConfig setGameStart={setGameStart} ballRadius={ballRadius} setBallRadius={setBallRadius} />
           }
 
         </div>
