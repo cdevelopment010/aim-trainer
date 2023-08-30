@@ -65,6 +65,14 @@
 .w-6 {width: 6rem}
 .w-7 {width: 7rem}
 .w-8 {width: 8rem}
+.min-w-1 {min-width: 1rem}
+.min-w-2 {min-width: 2rem}
+.min-w-3 {min-width: 3rem}
+.min-w-4 {min-width: 4rem}
+.min-w-5 {min-width: 5rem}
+.min-w-6 {min-width: 6rem}
+.min-w-7 {min-width: 7rem}
+.min-w-8 {min-width: 8rem}
 
 
 .scoreboard {
