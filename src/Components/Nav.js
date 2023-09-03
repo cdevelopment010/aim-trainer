@@ -39,13 +39,19 @@ export default function Nav() {
                         <div className={navStyles.socials}>
                             <ul className={`d-flex gap-10 m-5`}>
                                 <li>
-                                    <FontAwesomeIcon icon={faYoutube} className={navStyles.youtube}/>
+                                    <a href="https://www.youtube.com/@CraigDavisonDev" rel="noreferrer" target="_blank">
+                                        <FontAwesomeIcon icon={faYoutube} className={navStyles.youtube}/>
+                                    </a>
                                 </li>
                                 <li>
-                                    <FontAwesomeIcon icon={faTwitch} className={navStyles.twitch}/>
+                                    <a href="https://www.twitch.tv/cdev010" rel="noreferrer" target="_blank">
+                                        <FontAwesomeIcon icon={faTwitch} className={navStyles.twitch}/>
+                                    </a>
                                 </li>
                                 <li>
-                                    <FontAwesomeIcon icon={faDiscord} className={navStyles.discord}/>
+                                    <a href="https://discord.gg/F8KamyT6dP" rel="noreferrer" target="_blank">
+                                        <FontAwesomeIcon icon={faDiscord} className={navStyles.discord}/>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
