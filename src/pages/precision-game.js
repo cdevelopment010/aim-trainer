@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import style from "../styles/InitialGame.module.css";
 import Nav from "@/Components/Nav";
 import GameOverModal from "@/Components/GameOverModal";
+import UserGameConfig from "@/Components/UserGameConfig";
 import CurrentGameStats from "@/Components/CurrentGameStats";
 
 const precisionGame = ({precision = true}) => {
 
+    const [gameStart, setGameStart] = useState(false);
     const [counter, setCounter] = useState(0); 
     const [mouseClicks, setMouseClicks] = useState(0); 
     const [accuracy, setAccuracy] = useState(0)
@@ -16,6 +18,8 @@ const precisionGame = ({precision = true}) => {
     const [ballX, setBallX] = useState(0);
     const [ballY, setBallY] = useState(0);
     const [ballRadius, setBallRadius] = useState(50);
+    const [maxballRadius, setMaxBallRadius] = useState(50);
+    const [decreasingOption, setDecreasingOption] = useState("random");
 
     useEffect(() => {
       setAccuracy(mouseClicks ? Math.round((counter / mouseClicks)*100) / 100: 0);
@@ -26,22 +30,30 @@ const precisionGame = ({precision = true}) => {
         gameOver();
         return;
       }
-       let interval = setInterval(()=>{
-        setTimer(timer => timer - 100);
-      }, 100)
+       let interval
+      if (gameStart) {
+        interval  = setInterval(()=>{
+          setTimer(timer => timer - 100);
+        }, 100)
+      }
       
       return () => {
         clearInterval(interval);
       }
-    }, [timer])
+    }, [timer, gameStart])
 
     useEffect(() => {
-      setWindowWidth(window.innerWidth); 
-      setWindowHeight(window.innerHeight * 0.9);
-    },[])
+      if (gameStart) {
+        setWindowWidth(window.innerWidth); 
+        setWindowHeight(window.innerHeight * 0.9);
+        setMaxBallRadius(ballRadius);
+      }
+    },[gameStart])
 
     useEffect(() => {
-      generateBall(); 
+      if (windowWidth) {
+        generateBall(); 
+      }
     }, [windowWidth])
 
     function addMouseClicks(e) {
@@ -62,10 +74,19 @@ const precisionGame = ({precision = true}) => {
 
       const distance = Math.sqrt((mouseX - ballX) **2 + (mouseY - ballY)**2);
 
+      let newBallRadius = ballRadius;
       if (distance < ballRadius) {
+        if (decreasingOption === "decreasing"){
+          newBallRadius = newBallRadius - 2 < 10 ? 10 : newBallRadius - 2;
+        }
         removeBall();
+      } else {
+        if (decreasingOption === "decreasing"){
+          newBallRadius += 2; 
+        }
+        
       }
-
+      setBallRadius(newBallRadius);
     }
 
     function generateBall() {
@@ -81,18 +102,21 @@ const precisionGame = ({precision = true}) => {
 
         // issue with ball going off the canvas in the y direction
         let localBallRadius = ballRadius;
-        if (precision) {
-          localBallRadius = Math.floor(Math.random() * (50 - 10 + 1)+10); 
+        if (decreasingOption === "random") {
+          localBallRadius = Math.floor(Math.random() * (maxballRadius - 10 + 1)+10); 
+          setBallRadius(localBallRadius);
+        } else {
+          // localBallRadius = Math.floor(ballRadius * accuracy);
+          console.log("decreasing ball radius:", localBallRadius) 
           setBallRadius(localBallRadius);
         }
          
-        let ballLocalX = Math.floor(Math.random() * maxLeft) + 50;
-        let ballLocalY = Math.floor(Math.random() * maxTop) + 50; 
+        let ballLocalX = Math.floor(Math.random() * maxLeft) + localBallRadius;
+        let ballLocalY = Math.floor(Math.random() * maxTop) + localBallRadius; 
         setBallX(ballLocalX);
         setBallY(ballLocalY);
 
         ctx.beginPath(); 
-        // ctx.arc(95, 50, 40, 0, 2 * Math.PI);
         ctx.arc(ballLocalX, ballLocalY, localBallRadius, 0, Math.PI * 2);
         ctx.fillStyle = "#A4C2A5";
         ctx.fill();
@@ -120,6 +144,7 @@ const precisionGame = ({precision = true}) => {
         setTimer(30 * 1000);
         setAccuracy(0); 
         setMouseClicks(0); 
+        setGameStart(false)
         generateBall();
       }
     return (
@@ -131,6 +156,18 @@ const precisionGame = ({precision = true}) => {
           {/* Score modal */}
           {timer <= 0 &&
             <GameOverModal score={(counter * accuracy * 100).toFixed(0)} restartGame={restartGame}/>
+          }
+
+          {
+            !gameStart &&
+            <UserGameConfig 
+              setGameStart={setGameStart} 
+              ballRadius={ballRadius} 
+              setBallRadius={setBallRadius} 
+              gameType="precision"
+              decreasingOption={decreasingOption}
+              setDecreasingOption={setDecreasingOption}
+              />
           }
 
         </div>

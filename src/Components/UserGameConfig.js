@@ -3,10 +3,12 @@ import modalStyles from '@/styles/modal.module.css';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
-export default function UserGameConfig({setGameStart, ballRadius, setBallRadius}) {
+export default function UserGameConfig({setGameStart, ballRadius, setBallRadius, gameType = null, decreasingOption, setDecreasingOption}) {
 
     useEffect(()=> {
         drawBall();
+
+
     },[])
 
     useEffect(() => {
@@ -53,15 +55,28 @@ export default function UserGameConfig({setGameStart, ballRadius, setBallRadius}
                 <div className={`${modalStyles['modal-body-1fr']} text-center`}>
                     <div>
                         <div>
-                            <label htmlFor="myRange" className='m-2'>Ball size:</label>
-                        <input type="range" min="10" max="75" value={ballRadius}
-                            onChange={(e) => setBallRadius(e.target.value*1)}
-                            id="myRange" />
+                            <label htmlFor="myRange" className='m-2'>
+                               {gameType === "precision" && 
+                               <span>Initial </span>}
+                                Ball size:
+                            </label>
+                            <input type="range" min="10" max="75" value={ballRadius}
+                                onChange={(e) => setBallRadius(e.target.value*1)}
+                                id="myRange" />
                         </div>
                         <div>
                             <canvas id="ball-canvas" height="200" width="200"></canvas>
                         </div>
                     </div>
+                    {
+                        gameType === "precision" &&
+                        <div className='d-flex align-items-center justify-content-between'>
+                            <input type="radio" id="random" name="ball-radius" value="random" onChange={() => setDecreasingOption("random")} checked={decreasingOption === "random"} className='mr-1'/>
+                            <label for="random" className='mr-3'>Random ball size</label><br/>
+                            <input type="radio" id="decreasing" name="ball-radius" value="decreasing" onChange={() => setDecreasingOption("decreasing")} checked={decreasingOption === "decreasing"} className='mr-1'/>
+                            <label for="decreasing">Decreasing ball size</label><br/>
+                        </div>
+                    }
                 </div>
                 <div className={modalStyles['modal-footer']}>
                     <button className={`btn btn-secondary`}>
