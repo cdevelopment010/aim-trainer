@@ -4,6 +4,7 @@ import style from "../styles/InitialGame.module.css";
 import Nav from "@/Components/Nav";
 import GameOverModal from "@/Components/GameOverModal";
 import UserGameConfig from "@/Components/UserGameConfig";
+import CurrentGameStats from "@/Components/CurrentGameStats";
 
 const precisionGame = () => {
 
@@ -251,11 +252,7 @@ const precisionGame = () => {
     return (
         <div id="container" className={`bg-1 ${style.container}`}>
           <Nav />
-          <div className={`d-flex justify-content-center align-center ${style['game-nav']} gap-10` }>
-            <div className={`text-center-div text-colour-white-60 ${style['w-4']} ${style.timer}`}>{Math.round(timer*1)/1000}</div>
-            <div className={`text-center-div text-colour-2 ${style['min-w-7']} ${style.counter}`}>{counter}</div>
-            <div className={`text-center-div text-colour-white-60 ${style['w-4']} ${style.accuracy}`}>{ new Intl.NumberFormat(undefined, {style:'percent'}).format(accuracy) }</div>
-          </div>
+          <CurrentGameStats timer={timer} counter={counter} accuracy={accuracy}/>
           <canvas id="game-container" width={windowWidth} height={windowHeight} onClick={addMouseClicks}></canvas>
 
           {/* Score modal */}
